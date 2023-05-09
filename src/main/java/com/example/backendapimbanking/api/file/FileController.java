@@ -2,11 +2,14 @@ package com.example.backendapimbanking.api.file;
 
 import com.example.backendapimbanking.base.BaseRest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileController {
     private final FileService fileService;
+    @Value("${file.base-url}")
+    public String fileBaseUrl;
 
     @PostMapping
     public BaseRest<?> filesUpload(@RequestPart("file") MultipartFile multipartFile) {
@@ -82,15 +87,15 @@ public class FileController {
                 .data(files)
                 .build();
     }
+    @GetMapping("/downloads/{fileName}")
+    public ResponseEntity<?> downloadFile(@PathVariable("fileName") String fileName) {
+        Resource resource = fileService.downloadFile(fileName);
+        System.out.println(fileBaseUrl+"api/v1/files/download/"+fileName);
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() +"\"")
+                .body(resource);
 
-    @GetMapping("/download/{path}")
-    public BaseRest<?> downloadFile(@PathVariable String path) throws IOException {
-        FileDto fileDto = fileService.downLoadFiles(path);
-        return BaseRest.builder().status(true)
-                .code(HttpStatus.OK.value())
-                .messages("File have been get")
-                .timeStamp(LocalDateTime.now())
-                .data(fileDto)
-                .build();
+
     }
 }

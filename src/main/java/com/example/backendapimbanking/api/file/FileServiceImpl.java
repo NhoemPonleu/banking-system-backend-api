@@ -1,22 +1,29 @@
 package com.example.backendapimbanking.api.file;
 
 import com.example.backendapimbanking.util.FileUtil;
-import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.PathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class FileServiceImpl implements FileService {
     private FileUtil fileUtil;
+    @Value("${file.server-path}")
+    public String fileServerPath;
+
+    @Value("${file.base-url}")
+    public String fileBaseUrl;
+    @Value("${file.base-download}")
+    public String fileDownload;
 
     @Autowired
     public void setFileUtil(FileUtil fileUtil) {
@@ -47,9 +54,10 @@ public class FileServiceImpl implements FileService {
                 String url = String.format("%s%s", fileUtil.fileBaseUrl, name);
                 long size = file.length();
                 int lastDotIndex = name.lastIndexOf(".");
+                String downloadUrl =fileDownload + name;
                 String extension = name.substring(lastDotIndex + 1);
 
-                listFile.add(new FileDto(name, url, extension, size));
+                listFile.add(new FileDto(name, url, downloadUrl,extension, size));
             }
         }
         return listFile;
@@ -80,25 +88,15 @@ public class FileServiceImpl implements FileService {
         return true;
     }
 
+
     @Override
-    public FileDto downLoadFiles(String filePaht) throws IOException {
-        //FileDownloadUtil downloadUtil = new FileDownloadUtil();
-
-        Resource resource = null;
-        try {
-            resource = (Resource) fileUtil.getFileAsResource(filePaht);
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error");
+    public Resource downloadFile(String fileName) {
+        Resource resource=new PathResource(fileServerPath+fileName);
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new RuntimeException(" File not found");
         }
 
-        if (resource == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "FileNot Found");
-        } else {
-            Path p = fileUtil.getFileAsResource(filePaht);
-        }
-
-        return null;
-
+        return resource;
     }
 
 }

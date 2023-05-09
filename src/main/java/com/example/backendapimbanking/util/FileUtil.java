@@ -21,6 +21,8 @@ public class FileUtil {
 
     @Value("${file.base-url}")
     public String fileBaseUrl;
+    @Value("${file.base-download}")
+    public String fileDownload;
     private Path foundFile;
 
     public FileDto upload(MultipartFile file){
@@ -29,6 +31,7 @@ public class FileUtil {
         long size = file.getSize();
         String name = String.format("%s%s", UUID.randomUUID(),extension);
         String url = String.format("%s%s",fileBaseUrl,name);
+        String downloadUrl=fileDownload+name;
         Path path = Paths.get(fileServerPath + name);
 
         try {
@@ -37,6 +40,7 @@ public class FileUtil {
                     .name(name)
                     .url(url)
                     .extension(extension)
+                    .downloadUrl(downloadUrl)
                     .size(size)
                     .build();
         } catch (IOException e) {
@@ -70,23 +74,6 @@ public class FileUtil {
         }
         return list;
 
-    }
-    public Path getFileAsResource(String fileName) throws IOException {
-        Path dirPath = Paths.get(fileServerPath);
-
-        Files.list(dirPath).forEach(file -> {
-            if (file.getFileName().toString().startsWith(fileName)) {
-                foundFile = file;
-                return;
-            }
-        });
-
-        if (foundFile != null) {
-            Path path = Paths.get(fileServerPath);
-            return path;
-        }
-
-        return null;
     }
 }
 

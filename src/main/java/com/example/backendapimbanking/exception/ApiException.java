@@ -45,14 +45,12 @@ public class ApiException {
 
         }
         return BaseError.builder()
-                        .errors(er).
-
-                status(false).
-                messages("validation erro")
-                .code(HttpStatus.BAD_REQUEST.value())
-                        .timeStamp(LocalDateTime.now()).
-
-                         build();
+                        .errors(er)
+                        .status(false)
+                        .messages("validation erro")
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .timeStamp(LocalDateTime.now())
+                        .build();
 
     }
 }
