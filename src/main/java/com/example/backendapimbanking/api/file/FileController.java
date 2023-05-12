@@ -4,8 +4,8 @@ import com.example.backendapimbanking.base.BaseRest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +31,13 @@ public class FileController {
                 .code(HttpStatus.OK.value())
                 .data(fileDto)
                 .build();
+    }
+    @GetMapping("/download1/name")
+    public ResponseEntity<?>downloadFiles(@PathVariable  String name){
+          Resource resource=fileService.downloadFileName(name);
+        return  null;//ResponseEntity.ok();
+             //   .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM,"" ));
+
     }
 
     @PostMapping("/multiple")
@@ -88,14 +95,18 @@ public class FileController {
                 .build();
     }
     @GetMapping("/downloads/{fileName}")
-    public ResponseEntity<?> downloadFile(@PathVariable("fileName") String fileName) {
+    public BaseRest<?> downloadFile(@PathVariable("fileName") String fileName) {
         Resource resource = fileService.downloadFile(fileName);
         System.out.println(fileBaseUrl+"api/v1/files/download/"+fileName);
-        return ResponseEntity
-                .ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() +"\"")
-                .body(resource);
+        return BaseRest.builder().build();
+//                .ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() +"\"")
+//                .body(resource);
 
 
+    }
+    @DeleteMapping("deleted/{name}")
+    public void deleteFileByName(@PathVariable String name){
+        fileService.deleteByName(name);
     }
 }

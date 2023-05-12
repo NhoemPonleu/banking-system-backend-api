@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +99,23 @@ public class FileServiceImpl implements FileService {
         }
 
         return resource;
+    }
+
+    @Override
+    public FileDto fndByName(String name) {
+
+        return null;
+    }
+
+    @Override
+    public void deleteByName(String name) {
+     fileUtil.deleteByName(name);
+    }
+
+    @Override
+    public Resource downloadFileName(String name) {
+
+        return  fileUtil.findByName(name);
     }
 
 }

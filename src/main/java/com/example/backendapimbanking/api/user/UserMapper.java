@@ -30,4 +30,6 @@ public interface UserMapper {
     @SelectProvider(type = UserProvider.class ,method = "buildSelectByStudentCardId")
     @ResultMap("resultMap")
     Optional<User> selectByStudentCardId(@Param("studentCardId") String studentCardId);
+    @Select("SELECT * FROM users WHERE email= #{email} AND is_deleted=FALSE")
+    Optional<User>selectByEmail(@Param("email") String email);
 }

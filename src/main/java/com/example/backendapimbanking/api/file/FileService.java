@@ -12,4 +12,7 @@ public interface FileService {
     FileDto deleteSingleFile(String fileName);
     boolean removeAllFile();
     Resource downloadFile(String fileName);
+    FileDto fndByName(String name);
+    void deleteByName(String name);
+    Resource downloadFileName(String name);
 }
