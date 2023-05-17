@@ -1,15 +1,15 @@
 package com.example.backendapimbanking.api.auth;
 
-import com.example.backendapimbanking.api.auth.web.AuthorMapStruct;
 import com.example.backendapimbanking.api.auth.web.RegisterDto;
 import com.example.backendapimbanking.base.BaseRest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -32,6 +32,19 @@ public class AuthRestController {
                 .status(true)
                 .code(HttpStatus.OK.value())
                 .messages("Success")
+                .timeStamp(LocalDateTime.now())
+                .data(email)
+                .build();
+    }
+    @GetMapping("/check-verify")
+    public BaseRest<?>checkVerifY(@RequestParam String email,@RequestParam String verifiedCode){
+      log.warn("email {}",email);
+      log.warn("Verify {}",verifiedCode);
+      authService.checkVerify(email,verifiedCode);
+        return BaseRest.builder()
+                .status(true)
+                .code(HttpStatus.OK.value())
+                .messages("Success Verification")
                 .timeStamp(LocalDateTime.now())
                 .data(email)
                 .build();

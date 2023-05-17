@@ -26,15 +26,15 @@ public class MailUtil {
         private T data;
     }
     public void send(Meta<?>meta)throws MessagingException {
-      MimeMessage mimeMessage=javaMailSender.createMimeMessage();
+        MimeMessage mimeMessage=javaMailSender.createMimeMessage();
         MimeMessageHelper messageHelper=new MimeMessageHelper(mimeMessage);
         Context context=new Context();
         context.setVariable("data",meta.data);
-       String templatesHtml=templateEngine.process(meta.templatesUrl,context);
+        String templatesHtml=templateEngine.process(meta.templatesUrl,context);
         messageHelper.setText(templatesHtml,true);
         messageHelper.setTo(meta.to);
         messageHelper.setFrom(meta.from);
         messageHelper.setSubject(meta.subject);
-       javaMailSender.send(mimeMessage);
+        javaMailSender.send(mimeMessage);
     }
 }
