@@ -12,7 +12,6 @@ public class BackendApiMbankingApplication {
     public String getVerify(){
         return "auth/verify";
     }
-
     public static void main(String[] args) {
         SpringApplication.run(BackendApiMbankingApplication.class, args);
     }

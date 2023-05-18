@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Service
 @RequiredArgsConstructor
@@ -56,10 +59,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageInfo<UserDto> getPagination(int page, int limit, String name) {
-        PageInfo<User> pageDto = PageHelper.startPage(page, limit)
+    public Set<PageInfo<UserDto>> getPagination(int page, int limit, String name) {
+     PageInfo<User> pageDto = PageHelper.startPage(page, limit)
                 .doSelectPageInfo(() -> userMapper.select(name));
-        return userMapStruct.userPageInfoToDtoPageInfo(pageDto);
+        Set<PageInfo<User>> setUser=new HashSet<>();
+        setUser.add(pageDto);
+        return userMapStruct.userPageInfoToDtoPageInfo(setUser);
     }
 
     @Override
