@@ -20,6 +20,8 @@ repositories {
 }
 
 dependencies {
+    //passay
+    implementation 'org.passay:passay:1.6.3'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-security'

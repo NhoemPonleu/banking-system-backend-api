@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -16,7 +17,6 @@ import java.util.NoSuchElementException;
 
 public class UserController {
     private final UserService userService;
-
     @PostMapping
     public BaseRest<?> createUser(@RequestBody CreateUserDto createUserDto) {
         UserDto create = userService.createNewUser(createUserDto);
@@ -26,7 +26,6 @@ public class UserController {
                 .data(create)
                 .build();
     }
-
     @GetMapping("/{identitfier}")
     public BaseRest<?> findUser(@PathVariable("identitfier") String identitfier) {
         UserDto userDto;
@@ -72,7 +71,7 @@ public class UserController {
     public BaseRest<?> findAllUser(@RequestParam(name = "page", required = false, defaultValue = "1") int pages,
                                    @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
                                    @RequestParam(name = "name", required = false, defaultValue = "") String name) {
-        PageInfo<UserDto> getPage = userService.getPagination(pages, limit, name);
+        Set<PageInfo<UserDto>> getPage = userService.getPagination(pages, limit, name);
         return BaseRest.builder().code(HttpStatus.OK.value())
                 .status(true)
                 .messages("User has been deleted")

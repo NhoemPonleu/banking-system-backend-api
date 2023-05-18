@@ -40,8 +40,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(RegisterDto registerDto) {
         User user  = userMapStruct.registerDtoToUser(registerDto);
-        log.info("User: {}", user.getEmail());
         if(registerDto.password().equals(registerDto.confirmPassword())){
+            log.info("User: {}", user.getEmail());
             user.setPassword(encoder.encode(registerDto.password()));
             user.setIsVerified(false);
             authMapper.register(user);
@@ -51,9 +51,11 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         else {
-                throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"wrong Password");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"password doesnot confirm");
+        }
 
-    }}
+
+       }
 
 
     @Override

@@ -32,4 +32,8 @@ public interface UserMapper {
     Optional<User> selectByStudentCardId(@Param("studentCardId") String studentCardId);
     @Select("SELECT * FROM users WHERE email= #{email} AND is_deleted=FALSE")
     Optional<User>selectByEmail(@Param("email") String email);
+    @Select("SELECT EXISTS(SELECT * FROM users WHERE email=#{email})")
+    boolean existByEmail(String email);
+    @Select("SELECT EXISTS(SELECT * FROM roles WHERE id=#{roleId})")
+    boolean existRoleById(Integer roleId);
 }
