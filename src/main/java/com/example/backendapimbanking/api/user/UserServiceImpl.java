@@ -60,9 +60,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Set<PageInfo<UserDto>> getPagination(int page, int limit, String name) {
-     PageInfo<User> pageDto = PageHelper.startPage(page, limit)
+        PageInfo<User> pageDto = PageHelper.startPage(page, limit)
                 .doSelectPageInfo(() -> userMapper.select(name));
-        Set<PageInfo<User>> setUser=new HashSet<>();
+        Set<PageInfo<User>> setUser = new HashSet<>();
         setUser.add(pageDto);
         return userMapStruct.userPageInfoToDtoPageInfo(setUser);
     }

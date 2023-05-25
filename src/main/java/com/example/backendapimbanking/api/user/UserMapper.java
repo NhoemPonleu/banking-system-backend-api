@@ -16,6 +16,9 @@ public interface UserMapper {
     @Results(id="resultMap",value = {
             @Result(column = "student_card_id",property = "studentCardId"),
             @Result(column = "is_student",property = "isStudent")
+           // @Result(column = "id",property = "accounts",javaType = List.class,many = @Many(select ="selectUsersAccount")),
+           // @Result(column = "id",property = "roles",javaType = List.class,many = @Many(select = "buildLoadUserRolesSql"))
+
     })
     Optional<User>selectById(@Param("id") Integer id);
     @SelectProvider(type = UserProvider.class,method = "buildSelectSql")

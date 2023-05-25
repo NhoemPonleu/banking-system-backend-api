@@ -19,7 +19,7 @@ import java.util.Map;
 public class ApiException {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ResponseStatusException.class)
-    public BaseError<?>handleServieException(ResponseStatusException e){
+    public BaseError<?> handleServieException(ResponseStatusException e) {
 
         return BaseError.builder()
                 .errors(e.getReason()).
@@ -32,25 +32,24 @@ public class ApiException {
                 build();
 
     }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public BaseError<?> handleValidationException(MethodArgumentNotValidException ex){
-        List<Map<String,String>>er=new ArrayList<>();
-
-        for(FieldError err:ex.getFieldErrors()){
-            Map<String,String>errorsDetails=new HashMap<>();
-            errorsDetails.put("name",err.getField());
-            errorsDetails.put("message",err.getDefaultMessage());
+    public BaseError<?> handleValidationException(MethodArgumentNotValidException ex) {
+        List<Map<String, String>> er = new ArrayList<>();
+        for (FieldError err : ex.getFieldErrors()) {
+            Map<String, String> errorsDetails = new HashMap<>();
+            errorsDetails.put("name", err.getField());
+            errorsDetails.put("message", err.getDefaultMessage());
             er.add(errorsDetails);
 
         }
         return BaseError.builder()
-                        .errors(er)
-                        .status(false)
-                        .messages("validation erro")
-                        .code(HttpStatus.BAD_REQUEST.value())
-                        .timeStamp(LocalDateTime.now())
-                        .build();
-
+                .errors(er)
+                .status(false)
+                .messages("validation erro")
+                .code(HttpStatus.BAD_REQUEST.value())
+                .timeStamp(LocalDateTime.now())
+                .build();
     }
 }

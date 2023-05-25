@@ -1,6 +1,7 @@
 package com.example.backendapimbanking.api.auth;
 
 import com.example.backendapimbanking.api.auth.web.Role;
+import com.example.backendapimbanking.api.user.Authority;
 import com.example.backendapimbanking.api.user.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -25,10 +26,10 @@ public interface AuthMapper {
             @Result(column = "is_student",property = "isStudent"),
             @Result(column = "is_verified",property = "isVerified"),
             @Result(column = "verified_code",property = "verifiedCode"),
-            @Result(column = "id",property = "roles",many = @Many(select = "loadUserRoles"))
+            @Result(column = "id",property = "roles",many = @Many(select = "loadUserRoles")),
+
     })
     Optional<User> selectByEmail(@Param("e") String email);
-
     @Select("SELECT * FROM users WHERE email=#{e} AND is_deleted=FALSE AND is_verified=TRUE")
     @ResultMap("authResult")
     Optional<User> loadUserByUsername(@Param("e") String email);
@@ -45,5 +46,10 @@ public interface AuthMapper {
 
 
     @SelectProvider(type = AuthProvider.class, method = "buildLoadUserRolesSql")
+    @Result(column = "id",property = "authorities"
+    ,many = @Many(select = "loadUserAuthorities"))
     List<Role> loadUserRoles(@Param("id") Integer id);
+    @SelectProvider(type = AuthProvider.class,method = "selectAuthorities")
+    List<Authority>loadUserAuthorities(Integer roleId);
+
 }
