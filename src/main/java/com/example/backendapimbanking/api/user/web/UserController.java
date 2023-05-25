@@ -17,6 +17,7 @@ import java.util.Set;
 
 public class UserController {
     private final UserService userService;
+
     @PostMapping
     public BaseRest<?> createUser(@RequestBody CreateUserDto createUserDto) {
         UserDto create = userService.createNewUser(createUserDto);
@@ -26,6 +27,7 @@ public class UserController {
                 .data(create)
                 .build();
     }
+
     @GetMapping("/{identitfier}")
     public BaseRest<?> findUser(@PathVariable("identitfier") String identitfier) {
         UserDto userDto;
@@ -34,7 +36,7 @@ public class UserController {
             userDto = userService.findUserById(id);
 
         } catch (NoSuchElementException | NumberFormatException e) {
-           userDto = userService.finduserByStudentCardId(identitfier);
+            userDto = userService.finduserByStudentCardId(identitfier);
             System.out.println("user ");
         }
         return BaseRest.builder()

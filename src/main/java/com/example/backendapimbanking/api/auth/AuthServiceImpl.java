@@ -16,12 +16,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder encoder;
 
     private final MailUtil mailUtil;
+    private final JwtEncoder jwtEncoder;
     private final DaoAuthenticationProvider daoAuthenticationProvider;
 
     @Value("${spring.mail.username}")
@@ -41,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
     void setEncoder(PasswordEncoder encoder) {
         this.encoder = encoder;
     }
-
 
     @Transactional
     @Override
@@ -103,17 +113,33 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password());
 
         authentication = daoAuthenticationProvider.authenticate(authentication);
+        //create time now
+        Instant now=Instant.now();
+        //Define Scope
+        String scope=authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(auth->!auth.startsWith("ROLE_"))
+                .collect(Collectors.joining(" "));
+//        List<SimpleGrantedAuthority>authorities=new ArrayList<>();
+//    //    authorities.add(new SimpleGrantedAuthority("WRITE"));
+//        authorities.add(new SimpleGrantedAuthority("READ"));
+//        authorities.add(new SimpleGrantedAuthority("DELETE"));
+//        authorities.add(new SimpleGrantedAuthority("UPDATE"));
+//        authorities.add(new SimpleGrantedAuthority("FULL_CONTROL"));
 
-        log.info("Authentication: {}", authentication);
-        log.info("Authentication: {}", authentication.getName());
-        log.info("Authentication: {}", authentication.getCredentials());
+//        String scope=authorities.stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(" "));
 
-        // Logic on basic authorization header
-        String basicAuthFormat = authentication.getName() + ":" + authentication.getCredentials();
-        String encoding = Base64.getEncoder().encodeToString(basicAuthFormat.getBytes());
+        JwtClaimsSet jwtClaimsSet=JwtClaimsSet.builder()
+                .issuer("")
+                .issuedAt(now)
+                .subject(authentication.getName())
+                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .claim("scope",scope)
+                .build();
+        String accessToken=jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
 
-        log.info("Basic {}", encoding);
-
-        return new AuthDto(String.format("Basic: %s", encoding));
+       return new AuthDto("Bearer",accessToken);
     }
 }

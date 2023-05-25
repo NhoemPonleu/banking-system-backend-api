@@ -20,6 +20,8 @@ repositories {
 }
 
 dependencies {
+    //jwt
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     //passay
     implementation 'org.passay:passay:1.6.3'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
